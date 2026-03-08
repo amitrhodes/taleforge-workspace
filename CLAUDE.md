@@ -76,7 +76,7 @@ src/main/resources/
 
 ### Database
 
-- **PostgreSQL**: DB `taleforge`, user `taleforge_user`, password `Papita67`, port 5432
+- **PostgreSQL**: DB `taleforge`, user `taleforge_user`, password via `DB_PASSWORD` env var, port 5432
 - **Flyway**: manages all schema changes — never edit `ddl-auto`, it's set to `validate`
 - **Seed**: test@example.com / password, GRRM / ASOIAF data (author id=1, series id=1, books id=1–7), 69 genres
 
@@ -96,7 +96,7 @@ Flyway repair (after editing an already-applied migration):
 mvn flyway:repair \
   -Dflyway.url=jdbc:postgresql://localhost:5432/taleforge \
   -Dflyway.user=taleforge_user \
-  -Dflyway.password=Papita67
+  -Dflyway.password=$DB_PASSWORD
 ```
 
 ### API Endpoints (all at `http://localhost:8080`)

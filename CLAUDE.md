@@ -31,7 +31,7 @@ Run backend and frontend in separate terminals:
 ```bash
 # Terminal 1 — Backend (Java/Spring Boot, port 8080)
 cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=local
+mvn spring-boot:run
 
 # Terminal 2 — Frontend (Vite, port 5173)
 cd frontend
@@ -46,7 +46,7 @@ Frontend proxies `/api` → `http://localhost:8080` via Vite config.
 
 ```bash
 mvn clean package -DskipTests   # build
-mvn spring-boot:run -Dspring-boot.run.profiles=local   # run
+mvn spring-boot:run   # run
 pkill -9 -f "taleforge"         # kill
 ```
 

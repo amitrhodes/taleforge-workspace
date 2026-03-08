@@ -78,8 +78,18 @@ src/main/resources/
 
 - **PostgreSQL**: DB `taleforge`, user `taleforge_user`, password `Papita67`, port 5432
 - **Flyway**: manages all schema changes — never edit `ddl-auto`, it's set to `validate`
-- **Key tables**: `users`, `authors`, `series`, `books`, `characters`, `lore_items`, `genres`, `book_genres`, `page_requests`
 - **Seed**: test@example.com / password, GRRM / ASOIAF data (author id=1, series id=1, books id=1–7), 69 genres
+
+#### Key Tables
+
+- `users` (id, email, password_hash, role, created_at)
+- `authors` (id, name, bio, birth_date, nationality, portrait_url, wikipedia_url, website_url)
+- `series` (id, title, description, synopsis, start_year, status, author_id, wikipedia_url)
+- `books` (id, title, description, published_date, pages, cover_url, series_id, series_order, author_id, wikipedia_url, open_library_url)
+- `characters` (id, name, bio, book_id)
+- `lore_items` (id, question, answer, has_spoiler, book_id)
+- `genres` + `book_genres` join table
+- `page_requests` (id, query, status, created_at)
 
 Flyway repair (after editing an already-applied migration):
 ```bash
@@ -107,7 +117,7 @@ mvn flyway:repair \
 | GET | `/api/search?q=&type=` | public | Search (books/authors/series) |
 | POST | `/api/requests` | public | Submit content request |
 
-No list endpoints (`GET /api/books`, etc.) — by design.
+No list endpoints (`GET /api/books`, etc.) — by design. Search uses `LIKE '%q%'` — multi-word queries must be exact substrings.
 
 JWT: access token 15 min (in-memory on client), refresh token 7 days (localStorage).
 
@@ -161,14 +171,17 @@ src/
 
   hooks/
     useAuth.ts             # login / logout, in-memory user state
-    useSearch.ts           # URL-param-driven search
+    useSearch.ts           # URL-param-driven search (not used by HomePage directly)
     useAccordion.ts
     useBackToTop.ts
 
   services/
     api.ts                 # Axios (baseURL: /api) + JWT Bearer interceptor + 401 refresh logic
     auth.ts                # login(), register(), logout()
-    books.ts, authors.ts, series.ts, search.ts
+    books.ts               # book fetching
+    authors.ts             # author fetching
+    series.ts              # series fetching + submitRequest()
+    search.ts              # search(q, type?) → SearchResult[]
 ```
 
 ### Routes
